@@ -1,44 +1,27 @@
-import Head from 'next/head'
-import Layout, { siteTitle } from '../components/layout'
-import utilStyles from '../styles/utils.module.css'
-import { getSortedPostsData } from '../lib/posts'
-import Link from 'next/link'
-import Date from '../components/date'
 
-export default function Home({ allPostsData }) {
-  return (
-    <Layout home>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section className={utilStyles.headingMd}>
-        <p>Insights and knowledge to help find freedom from sin</p>
-      </section>
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>Blog</h2>
-        <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              <Link href={`/posts/${id}`}>
-                <a>{title}</a>
-              </Link>
-              <br />
-              <small className={utilStyles.lightText}>
-                <Date dateString={date} />
-              </small>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </Layout>
-  )
-}
+
+import { fetchEntries } from '@utils/contentfulPosts'
+import Post from '@components/Post'
+
+// inside your component markup, pull `posts` from props
+
+<div className="posts">
+  {posts.map((p) => {
+    return <Post key={p.date} date={p.date} image={p.image.fields} title={p.title} />
+  })}
+</div>
+
+// at the bottom of your component file
 
 export async function getStaticProps() {
-  const allPostsData = getSortedPostsData()
+  const res = await fetchEntries()
+  const posts = await res.map((p) => {
+    return p.fields
+  })
+
   return {
     props: {
-      allPostsData
-    }
+      posts,
+    },
   }
 }
