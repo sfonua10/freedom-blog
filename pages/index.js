@@ -1,16 +1,25 @@
-import { useEffect, useState } from "react";
 import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
-// import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
-// import Date from '../components/date'
 
-import { fetchEntries } from "../util/contenfulPosts";
-import Post from "../components/Post";
+let client = require("contentful").createClient({
+  space: process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+  accessToken: process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN,
+});
+
+export async function getStaticProps() {
+  let data = await client.getEntries({
+    content_type: 'post'
+  })
+  return {
+    props: {
+      posts: data.items
+    },
+  };
+}
 
 export default function Home({ posts }) {
-  console.log(posts)
   return (
     <Layout home>
       <Head>
@@ -24,7 +33,7 @@ export default function Home({ posts }) {
         <ul className={utilStyles.list}>
           {posts.map((post) => (
             <li className={utilStyles.listItem} key={post.sys.id}>
-              <Link href={`/posts/${post.fields.slug}`}>
+              <Link href={`/articles/${post.fields.slug}`}>
                 <a>{post.fields.title}</a>
               </Link>
               <br />
@@ -40,21 +49,3 @@ export default function Home({ posts }) {
   );
 }
 
-// export async function getStaticProps() {
-//   const allPostsData = getSortedPostsData()
-//   return {
-//     props: {
-//       allPostsData
-//     }
-//   }
-// }
-
-export async function getStaticProps() {
-  const data = await fetchEntries();
-  console.log('data', data)
-  return {
-    props: {
-      posts: data
-    },
-  };
-}
