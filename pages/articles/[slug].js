@@ -17,11 +17,12 @@ export async function getStaticPaths() {
     content_type: "post",
   });
 
-  const paths = data.items.map((post) => ({
-    params: { slug: post.fields.slug }
-  }));
-
-  return { paths, fallback: true };
+  return {
+    paths: data.items.map((post) => ({
+      params: { slug: post.fields.slug },
+    })),
+    fallback: true,
+  };
 }
 
 export async function getStaticProps({ params }) {
@@ -33,31 +34,30 @@ export async function getStaticProps({ params }) {
     props: {
       article: data.items[0],
     },
-    revalidate: 1
+    revalidate: 1,
   };
 }
 const Post = ({ article }) => {
-  console.log(article);
+  if(!article) return <div>404</div>
   return (
-    <>
+    <div>
       <Head>
         <title>{article.fields.title}</title>
         <link rel="icon" href="/favicon_io/apple-touch-icon.png" />
       </Head>
       <Wrapper>
         <h1>{article.fields.title}</h1>
-        { article?.fields?.image && 
+        {article?.fields?.image && (
           <Image
             src={"https:" + article?.fields?.image?.fields?.file?.url}
             width={article?.fields?.image?.fields.file.details.image.width}
             height={article?.fields?.image?.fields.file.details.image.height}
           />
-
-        }
+        )}
         <h4>{article.fields.subtitle}(self-awareness)</h4>
         {documentToReactComponents(article.fields.content)}
       </Wrapper>
-    </>
+    </div>
   );
 };
 
