@@ -1,15 +1,17 @@
-function Post({ date, image, title }) {
-  let { file, description } = image;
+import utilStyles from "../styles/utils.module.css";
+import Link from "next/link";
 
+function Post({ postData }) {
   return (
-    <div className="post">
-      <img alt={description} src={`https:${file.url}`} />
-      <div className="description">{description}</div>
-      <div className="text">
-        <h2>{title}</h2>
-        <h3>{date.substring(0, 10)}</h3>
-      </div>
-    </div>
+    <li className={utilStyles.listItem} key={postData.title}>
+      <Link href={`/posts/${postData.slug}`}>
+        <a>{postData.title}</a>
+      </Link>
+      <br />
+      <small className={utilStyles.lightText}>
+        {/* <Date dateString={p.date} /> */}
+      </small>
+    </li>
   );
 }
 
