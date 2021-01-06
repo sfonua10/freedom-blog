@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import { BLOCKS } from "@contentful/rich-text-types";
+import Head from "next/head";
+import Image from "next/image";
 
 const Wrapper = styled.div`
   margin-left: 1rem;
@@ -38,10 +39,21 @@ const Post = ({ article }) => {
   console.log(article);
   return (
     <>
+      <Head>
+        <title>{article.fields.title}</title>
+        <link rel="icon" href="/favicon_io/apple-touch-icon.png" />
+      </Head>
       <Wrapper>
         <h1>{article.fields.title}</h1>
-        <img src={article.fields.image.fields.file.url} />
-        <h4>{article.fields.title}</h4>
+        { article?.fields?.image && 
+          <Image
+            src={"https:" + article?.fields?.image?.fields?.file?.url}
+            width={article?.fields?.image?.fields.file.details.image.width}
+            height={article?.fields?.image?.fields.file.details.image.height}
+          />
+
+        }
+        <h4>{article.fields.subtitle}(self-awareness)</h4>
         {documentToReactComponents(article.fields.content)}
       </Wrapper>
     </>
