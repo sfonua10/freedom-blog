@@ -18,10 +18,10 @@ export async function getStaticPaths() {
   });
 
   const paths = data.items.map((post) => ({
-    params: { slug: post.fields.slug },
+    params: { slug: post.fields.slug }
   }));
 
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 }
 
 export async function getStaticProps({ params }) {
@@ -33,6 +33,7 @@ export async function getStaticProps({ params }) {
     props: {
       article: data.items[0],
     },
+    revalidate: 1
   };
 }
 const Post = ({ article }) => {
