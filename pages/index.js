@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
@@ -21,18 +22,29 @@ export async function getStaticProps() {
 }
 
 export default function Home({ posts }) {
+  const [myPosts, setMyPosts] = useState(posts);
+  useEffect(() => {
+    const initialPosts = posts.filter(post => post?.fields?.type !== 'incidents');
+    setMyPosts(initialPosts);
+  }, []);
+
+  const filterBlogs = () => {
+    const incidentPosts = posts.filter(post => post?.fields?.type === 'incidents');
+    setMyPosts(incidentPosts);
+  };
+
   return (
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <p>Insights and knowledge to help find freedom from sin</p>
+        <p>Insights and knowledge to help <span onClick={filterBlogs}>find</span> freedom from sin </p>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
-          {posts.map((post) => (
+          {myPosts.map((post) => (
             <li className={utilStyles.listItem} key={post.sys.id}>
               <Link href={`/articles/${post.fields.slug}`}>
                 <a>{post.fields.title}</a>
